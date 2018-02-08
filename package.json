@@ -34,22 +34,22 @@
     "react": "^16.0.0",
     "pixi-filters": "*",
     "expo-asset-utils": "^0.0.0",
-    "EventEmitter": "^1.0.0"
-  },
-  "dependencies": {
-    "pixi.js": "^4.6.2",
-    "url": "^0.11.0",
-    "path": "^0.12.7",
-    "pixi-filters": "*"
+    "gl-matrix": "^2.4.0",
+    "phaser-ce": "^2.9.4",
+    "adaptive-bezier-curve": "^1.0.3",
+    "adaptive-quadratic-curve": "^1.0.2",
+    "string-format": "^0.5.0",
+    "extrude-polyline": "^1.0.6",
+    "earcut": "^2.1.2",
+    "color-parser": "^0.1.0"
   },
   "devDependencies": {
-    "expo": "^24.0.0",
+    "expo": "^25.0.0",
     "pixi.js": "^4.6.2",
     "url": "^0.11.0",
     "path": "^0.12.7",
-    "react": "^16.0.0",
     "react-native":
-      "https://github.com/expo/react-native/archive/sdk-24.0.0.tar.gz"
+      "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz"
   },
   "directories": {
     "example": "examples",

@@ -11,6 +11,9 @@
       "icon": "./assets/icon.png",
       "hideExponentText": false
     },
+    "packagerOpts": {
+      "assetExts": ["json"]
+    },
     "ios": {
       "supportsTablet": true
     }
