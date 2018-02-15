@@ -60,7 +60,7 @@ Under the hood, ExpoPhaser is maintaining global instances of a few libraries.
 ```js
 window.PIXI = require('phaser-ce/build/custom/pixi');
 window.p2 = require('phaser-ce/build/custom/p2');
-window.Phaser = require('phaser-ce/build/custom/phaser-split');
+window.Phaser = require('phaser-ce/build/phaser');
 ```
 
 Other libs can be included but are not required. For instance you can import the custom Creature lib the same way.
