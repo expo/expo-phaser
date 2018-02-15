@@ -1,13 +1,17 @@
 {
-  "name": "expo-pixi",
-  "version": "0.1.2",
-  "description": "Tools for using pixi in Expo",
+  "name": "expo-phaser",
+  "version": "0.0.0",
+  "description": "Tools for using phaser in Expo",
   "author": "Evan Bacon <bacon@expo.io> (https://expo.io/)",
+  "license": "MIT",
   "files": ["lib"],
   "main": "lib/index.js",
   "keywords": [
     "react",
     "native",
+    "react-native",
+    "phaser-ce",
+    "phaser",
     "expo",
     "exponent",
     "game",
@@ -17,39 +21,19 @@
     "2d",
     "pixi",
     "pixi.js",
-    "sprite"
+    "sprite",
+    "flash"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/expo/expo-pixi.git"
+    "url": "https://github.com/expo/expo-phaser.git"
   },
-  "peerDependencies": {
-    "expo": "^24.0.0",
-    "pixi.js": "^4.6.2",
-    "url": "^0.11.0",
-    "path": "^0.12.7",
-    "react": "^16.0.0",
-    "pixi-filters": "*",
-    "expo-asset-utils": "^0.0.0",
-    "gl-matrix": "^2.4.0",
-    "phaser-ce": "^2.9.4",
-    "adaptive-bezier-curve": "^1.0.3",
-    "adaptive-quadratic-curve": "^1.0.2",
-    "string-format": "^0.5.0",
-    "extrude-polyline": "^1.0.6",
-    "earcut": "^2.1.2",
-    "color-parser": "^0.1.0"
-  },
-  "devDependencies": {
-    "expo": "^25.0.0",
-    "pixi.js": "^4.6.2",
-    "url": "^0.11.0",
-    "path": "^0.12.7",
-    "react-native":
-      "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz"
+  "dependencies": {
+    "@expo/browser-polyfill": "^0.0.0-alpha.4",
+    "phaser-ce": "^2.9.4"
   },
   "directories": {
     "example": "examples",
