@@ -220,3 +220,12 @@ function startGame({ context }) {
   game.state.start('Playable');
 }
 ```
+
+**note:** When working with `.json` asset inclusion, be sure to update the app.json file to handle `.json` appropriately.
+```
+"packagerOpts": {
+  "assetExts": [
+    "json"
+  ]
+},
+```
