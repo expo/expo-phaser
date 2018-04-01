@@ -3,7 +3,7 @@ import AssetUtils from 'expo-asset-utils';
 import React from 'react';
 import { View } from 'react-native';
 import Assets from './Assets';
-import Game from './Game';
+import Controls from './Controls';
 
 export default class App extends React.Component {
   state = {
@@ -39,6 +39,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
+    Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
     this.preloadAssets();
   }
 
@@ -47,7 +48,7 @@ export default class App extends React.Component {
   }
 
   get screen() {
-    return <Expo.GLView style={{ flex: 1 }} onContextCreate={context => new Game({ context })} />;
+    return <Controls />;
   }
 
   render() {
