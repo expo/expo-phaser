@@ -7,8 +7,9 @@
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
     "expo": "^25.0.0",
-    "expo-asset-utils": "^0.0.0",
-    "expo-phaser": "../../expo-phaser-v0.0.0.tgz",
+    "expo-asset-utils": "^0.0.4-alpha.2",
+    "expo-multi-touch": "^0.0.0",
+    "expo-phaser": "../../expo-phaser-v0.0.1-alpha.0.tgz",
     "react": "16.2.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz"
   },
