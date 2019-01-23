@@ -79,6 +79,7 @@ export default class Playable {
 
   onTouchesBegan = () => (this.pressing = true);
   onTouchesEnded = () => {
+
     this.pressing = false;
     if (this.player) {
       if (this.player.alive) {
@@ -257,7 +258,7 @@ export default class Playable {
       explosion.reset(alien.body.x, alien.body.y);
       explosion.play('kaboom', 30, false, true);
     }
-    if (this.aliens.countLiving() == 0) {
+    if (this.aliens.countLiving() === 0) {
       this.score += 1000;
       // this.scoreText.text = this.scoreString + this.score;
 
@@ -335,7 +336,7 @@ export default class Playable {
         //  And fire it
         bullet.reset(player.x, player.y + 8 * scale);
         bullet.body.velocity.y = -400 * scale;
-        bulletTime = game.time.now + 200 * scale;
+        this.bulletTime = game.time.now + 200 * scale;
       }
     }
   };

@@ -5,17 +5,24 @@
   "author": "support@expo.io",
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
   "dependencies": {
-    "expo": "^25.0.0",
+    "expo": "^32.0.0",
     "expo-asset-utils": "^0.0.4-alpha.2",
     "expo-multi-touch": "^0.0.0",
     "expo-phaser": "../../expo-phaser-v0.0.1-alpha.0.tgz",
-    "react": "16.2.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz"
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
   },
   "devDependencies": {
     "eslint": "^4.9.0",
     "eslint-config-universe": "^1.0.6",
-    "prettier": "^1.7.4"
+    "prettier": "^1.7.4",
+    "babel-preset-expo": "^5.0.0"
   }
 }

@@ -3,7 +3,7 @@
     "name": "basic",
     "description": "expo-phaser basic example",
     "slug": "expo-phaser-basic",
-    "sdkVersion": "25.0.0",
+    "sdkVersion": "32.0.0",
     "version": "1.0.0",
     "primaryColor": "#E1E4F0",
     "icon": "./assets/icon.png",

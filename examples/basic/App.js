@@ -1,4 +1,4 @@
-import Expo from 'expo';
+import { ScreenOrientation } from 'expo';
 import AssetUtils from 'expo-asset-utils';
 import React from 'react';
 import { View } from 'react-native';
@@ -39,7 +39,7 @@ export default class App extends React.Component {
   }
 
   componentWillMount() {
-    Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
+    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
     this.preloadAssets();
   }
 
