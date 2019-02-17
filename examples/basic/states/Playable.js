@@ -1,8 +1,6 @@
 import React from 'react';
-
-import Assets from '../Assets';
-import uri from '../utils/uri';
 import { PixelRatio } from 'react-native';
+import { func, images } from '../utils/library';
 
 const scale = PixelRatio.get();
 class SettingsConfig {
@@ -38,32 +36,34 @@ export default class Playable {
 
   preload = () => {
     const { game } = this;
+    const { files } = images;
 
     console.disableYellowBox = true;
 
-    game.load.image('bullet', uri(Assets.files['bullet.png']));
-    game.load.image('enemyBullet', uri(Assets.files['enemy-bullet.png']));
+    game.load.image('bullet', func.uri(files.bullet));
+    game.load.image('enemyBullet', func.uri(files.enemyBullet));
     game.load.spritesheet(
       'invader',
-      uri(Assets.files['invader32x32x4.png']),
+      func.uri(files.invader),
       Settings.invader,
       Settings.invader
     );
-    game.load.image('ship', uri(Assets.files['player.png']));
+    game.load.image('ship', func.uri(files.player));
     game.load.spritesheet(
       'kaboom',
-      uri(Assets.files['explode.png']),
+      func.uri(files.explode),
       Settings.explosion,
       Settings.explosion
     );
-    game.load.image('starfield', uri(Assets.files['starfield.png']));
+    game.load.image('starfield', func.uri(files.starfield));
   };
 
   updateControls = ({ velocity }) => {
     const { player } = this;
     if (player && player.alive) {
       let speed = Math.floor(velocity * Settings.playerSpeed);
-      //  Reset the player, then check for movement keys
+
+      // reset the player, then check for movement keys
       player.body.velocity.setTo(0, 0);
       player.body.velocity.x = speed;
     }
@@ -72,9 +72,11 @@ export default class Playable {
   get width() {
     return this.game.world.width;
   }
+
   get height() {
     return this.game.world.height;
   }
+
   scaleNode = node => {
     node.width *= scale;
     node.height *= scale;
@@ -255,8 +257,8 @@ export default class Playable {
   };
 
   descend = () => {
-    console.log('Loop');
-    this.aliens.y += this.height * 0.0166666667;
+    // console.log('Loop');
+    // this.aliens.y += this.height * 0.0166666667;
   };
 
   collisionHandler = (bullet, alien) => {

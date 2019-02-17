@@ -2,28 +2,17 @@ import React from 'react';
 import { View } from 'react-native';
 import { AppLoading, Asset, ScreenOrientation } from 'expo';
 
-import Assets from './Assets';
+import { func, images } from './utils/library';
+
 import Controls from './Controls';
 
 export default class App extends React.Component {
   state = {
-    isLoading: true,
+    isLoading: true
   };
 
-  get files() {
-    const imagesArray = Object.values(Assets.files);
-
-    return imagesArray.map(image => {
-      if (typeof image === 'string') {
-        return Image.prefetch(image);
-      }
-
-      return Asset.fromModule(image).downloadAsync();
-    });
-  }
-
   async preloadAssetsAsync() {
-    const imageAssets = this.files;
+    const imageAssets = func.cacheImages(images.files);
 
     await Promise.all([...imageAssets]).then(() => {
       this.setState({ isLoading: false });
