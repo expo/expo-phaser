@@ -8,10 +8,13 @@ export default class Game {
     ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
 
     const game = ExpoPhaser.game({ context });
-
     this.playable = new Playable({ game, context });
+
     game.state.add('Playable', this.playable);
     game.state.start('Playable');
+
+    this.onTouchesBegan = this.onTouchesBegan.bind(this);
+    this.onTouchesEnded = this.onTouchesEnded.bind(this);
   }
 
   updateControls(velocity) {
@@ -21,10 +24,18 @@ export default class Game {
   }
 
   onTouchesBegan() {
-    return this.playable && this.playable.onTouchesBegan();
+    if (!this.playable) {
+      return false;
+    }
+
+    return this.playable.onTouchesBegan();
   }
 
   onTouchesEnded() {
-    return this.playable && this.playable.onTouchesEnded();
+    if (!this.playable) {
+      return false;
+    }
+
+    return this.playable.onTouchesEnded();
   }
 }

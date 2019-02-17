@@ -5,35 +5,61 @@ import { MultiTouchView } from 'expo-multi-touch';
 import Game from './Game';
 
 export default class Controls extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onTouchesBegan = this.onTouchesBegan.bind(this);
+    this.onTouchesEnded = this.onTouchesEnded.bind(this);
+  }
+
   componentDidMount() {
-    this._subscribe();
-  }
-
-  componentWillUnmount() {
-    this._unsubscribe();
-  }
-
-  _subscribe() {
-    Accelerometer.setUpdateInterval(16);
-
-    this._subscription = Accelerometer.addListener(
-      ({ x }) => this.game && this.game.updateControls(x)
-    );
-  }
-
-  _unsubscribe() {
-    Accelerometer.removeAllListeners();
-
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
+    this.subscribe();
   }
 
   shouldComponentUpdate() {
     return false;
   }
 
-  onTouchesBegan = () => this.game && this.game.onTouchesBegan();
-  onTouchesEnded = () => this.game && this.game.onTouchesEnded();
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  onTouchesBegan() {
+    if (!this.game) {
+      return false;
+    }
+
+    return this.game.onTouchesBegan();
+  }
+
+  onTouchesEnded() {
+    if (!this.game) {
+      return false;
+    }
+
+    return this.game.onTouchesEnded();
+  }
+
+  setupGame(context) {
+    this.game = new Game({ context });
+  }
+
+  subscribe() {
+    Accelerometer.setUpdateInterval(16);
+
+    this.subscription = Accelerometer.addListener(
+      ({ x }) => this.game && this.game.updateControls(x)
+    );
+  }
+
+  unsubscribe() {
+    Accelerometer.removeAllListeners();
+
+    if (this.subscription) {
+      this.subscription.remove();
+    }
+    this.subscription = null;
+  }
 
   render() {
     return (
@@ -44,8 +70,8 @@ export default class Controls extends React.Component {
         onTouchesCancelled={this.onTouchesEnded}
       >
         <GLView
+          onContextCreate={context => this.setupGame(context)}
           style={{ flex: 1 }}
-          onContextCreate={context => (this.game = new Game({ context }))}
         />
       </MultiTouchView>
     );

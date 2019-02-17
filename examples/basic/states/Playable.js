@@ -1,8 +1,8 @@
-import React from 'react';
 import { PixelRatio } from 'react-native';
 import { func, images } from '../utils/library';
 
 const scale = PixelRatio.get();
+
 class SettingsConfig {
   constructor() {
     this.explosion = 128; // * scale;
@@ -10,6 +10,7 @@ class SettingsConfig {
     this.playerSpeed = 600;
   }
 }
+
 const Settings = new SettingsConfig();
 
 export default class Playable {
@@ -68,14 +69,6 @@ export default class Playable {
       player.body.velocity.setTo(0, 0);
       player.body.velocity.x = speed;
     }
-  }
-
-  get width() {
-    return this.game.world.width;
-  }
-
-  get height() {
-    return this.game.world.height;
   }
 
   scaleNode(node) {
@@ -247,7 +240,8 @@ export default class Playable {
     this.aliens.x = alienWidth / 2;
     this.aliens.y = height * 0.0625;
 
-    // all this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+    // all this does is basically start the invaders moving. notice we're
+    // moving the Group they belong to, rather than the invaders directly.
     const tween = this.game.add
       .tween(this.aliens)
       .to(
@@ -260,7 +254,7 @@ export default class Playable {
         true
       );
 
-    //  When the tween loops it calls descend
+    // when the tween loops it calls descend
     tween.onRepeat.add(this.descend, this);
   }
 
@@ -280,15 +274,15 @@ export default class Playable {
   }
 
   collisionHandler(bullet, alien) {
-    //  When a bullet hits an alien we kill them both
+    // when a bullet hits an alien we kill them both
     bullet.kill();
     alien.kill();
 
-    //  Increase the score
+    // increase the score
     this.score += 20;
     // this.scoreText.text = this.scoreString + this.score;
 
-    //  And create an explosion :)
+    // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
     if (explosion) {
       explosion.reset(alien.body.x, alien.body.y);
@@ -318,13 +312,13 @@ export default class Playable {
       this.live.kill();
     }
 
-    //  And create an explosion :)
+    // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
     if (explosion) {
       explosion.reset(player.body.x, player.body.y);
       explosion.play('kaboom', 30, false, true);
     }
-    // When the player dies
+    // when the player dies
     if (this.lives.countLiving() < 1) {
       player.kill();
       this.enemyBullets.callAll('kill');
@@ -379,7 +373,8 @@ export default class Playable {
     }
   }
 
-  resetBullet(bullet) {
+  // resetBullet(bullet) {
+  resetBullet() {
     // called if the bullet goes out of the screen
     this.bullet.kill();
   }
@@ -396,6 +391,7 @@ export default class Playable {
 
     // revives the player
     player.revive();
+
     // hides the text
     // stateText.visible = false;
   }
