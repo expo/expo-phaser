@@ -1,57 +1,43 @@
-import Expo from 'expo';
-import AssetUtils from 'expo-asset-utils';
 import React from 'react';
 import { View } from 'react-native';
+import { AppLoading, Asset, ScreenOrientation } from 'expo';
+
 import Assets from './Assets';
 import Controls from './Controls';
 
 export default class App extends React.Component {
   state = {
-    loading: true,
+    isLoading: true,
   };
 
-  get fonts() {
-    let items = {};
-    const keys = Object.keys(Assets.fonts || {});
-    for (let key of keys) {
-      const item = Assets.fonts[key];
-      const name = key.substr(0, key.lastIndexOf('.'));
-      items[name] = item;
-    }
-    return [items];
-  }
-
   get files() {
-    return [...AssetUtils.arrayFromObject(Assets.files || {})];
-  }
+    const imagesArray = Object.values(Assets.files);
 
-  get audio() {
-    return AssetUtils.arrayFromObject(Assets.audio);
-  }
+    return imagesArray.map(image => {
+      if (typeof image === 'string') {
+        return Image.prefetch(image);
+      }
 
-  async preloadAssets() {
-    await AssetUtils.cacheAssetsAsync({
-      // fonts: this.fonts,
-      files: this.files,
-      // audio: this.audio,
+      return Asset.fromModule(image).downloadAsync();
     });
-    this.setState({ loading: false });
+  }
+
+  async preloadAssetsAsync() {
+    const imageAssets = this.files;
+
+    await Promise.all([...imageAssets]).then(() => {
+      this.setState({ isLoading: false });
+    });
   }
 
   componentWillMount() {
-    Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
-    this.preloadAssets();
-  }
-
-  get loading() {
-    return <View />;
-  }
-
-  get screen() {
-    return <Controls />;
+    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
+    this.preloadAssetsAsync();
   }
 
   render() {
-    return this.state.loading ? this.loading : this.screen;
+    const { isLoading } = this.state;
+
+    return isLoading ? <View /> : <Controls />;
   }
 }
