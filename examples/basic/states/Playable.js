@@ -38,6 +38,9 @@ export default class Playable {
 
   preload = () => {
     const { game } = this;
+
+    console.disableYellowBox = true;
+
     game.load.image('bullet', uri(Assets.files['bullet.png']));
     game.load.image('enemyBullet', uri(Assets.files['enemy-bullet.png']));
     game.load.spritesheet(
@@ -132,7 +135,11 @@ export default class Playable {
     this.enemyBullets.setAll('checkWorldBounds', true);
 
     //  The hero!
-    this.player = game.add.sprite(this.width * 0.5, this.height * 0.833333333, 'ship');
+    this.player = game.add.sprite(
+      this.width * 0.5,
+      this.height * 0.833333333,
+      'ship'
+    );
     this.player.anchor.setTo(0.5, 0.5);
     this.scaleNode(this.player);
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
@@ -163,7 +170,11 @@ export default class Playable {
     const shipInterval = 30 * scale;
     const shipY = 60 * scale;
     for (var i = 0; i < lives; i++) {
-      var ship = this.lives.create(initialshipXoffset + shipInterval * i, shipY, 'ship');
+      var ship = this.lives.create(
+        initialshipXoffset + shipInterval * i,
+        shipY,
+        'ship'
+      );
       this.scaleNode(ship);
       ship.anchor.setTo(0.5, 0.5);
       ship.angle = 90;
@@ -190,18 +201,24 @@ export default class Playable {
     const alienAvailableSpace = this.width - alienDelta;
     const alienWidth = 32 * scale;
     const alienPadding = 12;
-    const aliens = Math.floor(alienAvailableSpace / (alienPadding + alienWidth));
+    const aliens = Math.floor(
+      alienAvailableSpace / (alienPadding + alienWidth)
+    );
 
     const dimensions = {
       rows: 4,
-      columns: aliens,
+      columns: aliens
     };
     const alienOffset = {
-      x: alienAvailableSpace / dimensions.columns,
+      x: alienAvailableSpace / dimensions.columns
     };
     for (let y = 0; y < dimensions.rows; y++) {
       for (let x = 0; x < dimensions.columns; x++) {
-        const alien = this.aliens.create(x * alienOffset.x, y * alienOffset.x, 'invader');
+        const alien = this.aliens.create(
+          x * alienOffset.x,
+          y * alienOffset.x,
+          'invader'
+        );
         this.scaleNode(alien);
         alien.anchor.setTo(0.5, 0.5);
         alien.animations.add('fly', [0, 1, 2, 3], 20, true);
@@ -380,7 +397,7 @@ export default class Playable {
       collisionHandler,
       enemyBullets,
       enemyHitsPlayer,
-      playerHalf,
+      playerHalf
     } = this;
     //  Scroll the background
 
@@ -406,8 +423,20 @@ export default class Playable {
       }
 
       //  Run collision
-      game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this);
-      game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
+      game.physics.arcade.overlap(
+        bullets,
+        aliens,
+        collisionHandler,
+        null,
+        this
+      );
+      game.physics.arcade.overlap(
+        enemyBullets,
+        player,
+        enemyHitsPlayer,
+        null,
+        this
+      );
     }
   };
 }
