@@ -1,6 +1,7 @@
-import Expo from 'expo';
 import React from 'react';
+import { Accelerometer, GLView } from 'expo';
 import { MultiTouchView } from 'expo-multi-touch';
+
 import Game from './Game';
 
 export default class Controls extends React.Component {
@@ -12,14 +13,14 @@ export default class Controls extends React.Component {
   }
 
   _subscribe = () => {
-    Expo.Accelerometer.setUpdateInterval(16);
-    this._subscription = Expo.Accelerometer.addListener(
+    Accelerometer.setUpdateInterval(16);
+    this._subscription = Accelerometer.addListener(
       ({ x }) => this.game && this.game.updateControls(x)
     );
   };
 
   _unsubscribe = () => {
-    Expo.Accelerometer.removeAllListeners();
+    Accelerometer.removeAllListeners();
     this._subscription && this._subscription.remove();
     this._subscription = null;
   };
@@ -35,7 +36,7 @@ export default class Controls extends React.Component {
         onTouchesBegan={this.onTouchesBegan}
         onTouchesEnded={this.onTouchesEnded}
         onTouchesCancelled={this.onTouchesEnded}>
-        <Expo.GLView
+        <GLView
           style={{ flex: 1 }}
           onContextCreate={context => (this.game = new Game({ context }))}
         />
