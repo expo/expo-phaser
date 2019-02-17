@@ -1,30 +1,39 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Expo from 'expo';
+import { Accelerometer } from 'expo';
 
 const scale = 50;
 const axis = 'x';
+
 export default class TestSensor extends React.Component {
-  state = {};
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      [axis]: 0
+    };
+  }
 
   componentDidMount() {
-    this._subscribe();
-  }
-  componentWillUnmount() {
-    this._unsubscribe();
+    this.subscribe();
   }
 
-  _subscribe = () => {
-    Expo.Accelerometer.setUpdateInterval(16);
-    this._subscription = Expo.Accelerometer.addListener(data =>
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  subscribe() {
+    Accelerometer.setUpdateInterval(16);
+
+    this.subscription = Accelerometer.addListener(data =>
       this.setState({ [axis]: data[axis] })
     );
-  };
+  }
 
-  _unsubscribe = () => {
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
-  };
+  unsubscribe() {
+    this.subscription && this.subscription.remove();
+    this.subscription = null;
+  }
 
   render() {
     const data = this.state[axis];

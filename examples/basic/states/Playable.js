@@ -14,21 +14,21 @@ const Settings = new SettingsConfig();
 
 export default class Playable {
   constructor({ game, context }) {
-    this.player;
-    this.aliens;
-    this.bullets;
+    this.player = null;
+    this.aliens = null;
+    this.bullets = null;
     this.bulletTime = 0;
     // this.cursors;
     // this.fireButton;
-    this.explosions;
-    this.starfield;
+    this.explosions = null;
+    this.starfield = null;
     this.score = 0;
     this.scoreString = '';
-    this.scoreText;
-    this.lives;
-    this.enemyBullet;
+    this.scoreText = null;
+    this.lives = null;
+    this.enemyBullet = null;
     this.firingTimer = 0;
-    this.stateText;
+    this.stateText = null;
     this.livingEnemies = [];
 
     this.game = game;
@@ -100,6 +100,8 @@ export default class Playable {
 
   create() {
     const { game } = this;
+    const { world } = game;
+    const { height, width } = world;
 
     // game.stage.backgroundColor = '#4488AA';
     game.stage.backgroundColor = '#000';
@@ -115,10 +117,10 @@ export default class Playable {
      * */
 
     // the scrolling starfield background
-    // this.starfield = game.add.tileSprite(0, 0, this.width, this.height, 'starfield');
+    // this.starfield = game.add.tileSprite(0, 0, width, height, 'starfield');
     this.starfield = game.add.sprite(0, 0, 'starfield');
-    this.starfield.width = this.width;
-    this.starfield.height = this.height;
+    this.starfield.height = height;
+    this.starfield.width = width;
 
     // our bullet group
     this.bullets = game.add.group();
@@ -144,12 +146,8 @@ export default class Playable {
     this.enemyBullets.setAll('outOfBoundsKill', true);
     this.enemyBullets.setAll('checkWorldBounds', true);
 
-    //  The hero!
-    this.player = game.add.sprite(
-      this.width * 0.5,
-      this.height * 0.833333333,
-      'ship'
-    );
+    // the hero!
+    this.player = game.add.sprite(width * 0.5, height * 0.833333333, 'ship');
 
     this.player.anchor.setTo(0.5, 0.5);
     this.scaleNode(this.player);
@@ -176,8 +174,8 @@ export default class Playable {
     // this.stateText.visible = false;
 
     const lives = 3;
-    const shipOffset = this.width * 0.125;
-    const initialshipXoffset = this.width - shipOffset * lives;
+    const shipOffset = width * 0.125;
+    const initialshipXoffset = width - shipOffset * lives;
     const shipInterval = 30 * scale;
     const shipY = 60 * scale;
 
@@ -210,8 +208,12 @@ export default class Playable {
   }
 
   createAliens() {
-    const alienDelta = this.width * 0.25;
-    const alienAvailableSpace = this.width - alienDelta;
+    const { game } = this;
+    const { world } = game;
+    const { height, width } = world;
+
+    const alienDelta = width * 0.25;
+    const alienAvailableSpace = width - alienDelta;
     const alienWidth = 32 * scale;
     const alienPadding = 12;
     const aliens = Math.floor(
@@ -243,13 +245,13 @@ export default class Playable {
 
     // const alienOffset = this.game.world.width
     this.aliens.x = alienWidth / 2;
-    this.aliens.y = this.height * 0.0625;
+    this.aliens.y = height * 0.0625;
 
     // all this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
     const tween = this.game.add
       .tween(this.aliens)
       .to(
-        { x: this.width - alienAvailableSpace + alienWidth / 2 },
+        { x: width - alienAvailableSpace + alienWidth / 2 },
         2000,
         Phaser.Easing.Linear.None,
         true,
@@ -269,8 +271,12 @@ export default class Playable {
   }
 
   descend() {
+    const { game } = this;
+    const { world } = game;
+    const { height } = world;
+
     console.log('Loop');
-    this.aliens.y += this.height * 0.0166666667;
+    this.aliens.y += height * 0.0166666667;
   }
 
   collisionHandler(bullet, alien) {
@@ -380,11 +386,11 @@ export default class Playable {
 
   restart() {
     const { lives, aliens, createAliens, player } = this;
-    //  A new level starts
+    // a new level starts
 
     // resets the life count
     lives.callAll('revive');
-    //  And brings the aliens back from the dead :)
+    // and brings the aliens back from the dead :)
     aliens.removeAll();
     createAliens();
 
@@ -395,11 +401,15 @@ export default class Playable {
   }
 
   cycleNode(node) {
+    const { game } = this;
+    const { world } = game;
+    const { width } = world;
+
     const half = node.width / 2;
 
     if (node.x < -half) {
-      node.x = this.width + half;
-    } else if (node.x > this.width + half) {
+      node.x = width + half;
+    } else if (node.x > width + half) {
       node.x = -half;
     }
   }
@@ -416,14 +426,14 @@ export default class Playable {
       enemyBullets,
       enemyHitsPlayer
     } = this;
-    //  Scroll the background
+    // scroll the background
 
     if (starfield.tilePosition) {
       starfield.tilePosition.y += 2;
     }
 
     if (player.alive) {
-      //  Firing?
+      // firing?
       if (game.time.now > firingTimer) {
         this.enemyFires();
       }
@@ -439,7 +449,7 @@ export default class Playable {
         game.input.onTap.addOnce(this.restart, this);
       }
 
-      //  Run collision
+      // run collision
       game.physics.arcade.overlap(
         bullets,
         aliens,
@@ -447,6 +457,7 @@ export default class Playable {
         null,
         this
       );
+
       game.physics.arcade.overlap(
         enemyBullets,
         player,
