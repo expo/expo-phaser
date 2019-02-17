@@ -1,20 +1,31 @@
 {
-  "name": "basic",
-  "version": "0.0.0",
+  "name": "expo-phase-basic",
+  "version": "0.0.1",
   "description": "expo-phaser basic example",
-  "author": "support@expo.io",
+  "author": "expo",
+  "keywords": [
+    "expo",
+    "react-native",
+    "phaser"
+  ],
   "private": true,
   "main": "node_modules/expo/AppEntry.js",
   "dependencies": {
-    "expo": "^25.0.0",
-    "expo-asset-utils": "^0.0.0",
+    "expo": "^32.0.0",
+    "expo-multi-touch": "0.0.0",
     "expo-phaser": "../../expo-phaser-v0.0.0.tgz",
-    "react": "16.2.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-25.0.0.tar.gz"
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
   },
   "devDependencies": {
-    "eslint": "^4.9.0",
-    "eslint-config-universe": "^1.0.6",
-    "prettier": "^1.7.4"
+    "babel-preset-expo": "^5.0.0",
+    "eslint": "^5.14.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.16.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "prettier": "^1.16.4"
   }
 }
