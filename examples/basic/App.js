@@ -6,10 +6,18 @@ import { func, images } from './utils/library';
 
 import Controls from './Controls';
 
+ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
+
 export default class App extends React.Component {
-  state = {
-    isLoading: true
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      isLoading: true
+    };
+
+    this.preloadAssetsAsync = this.preloadAssetsAsync.bind(this);
+  }
 
   async preloadAssetsAsync() {
     const imageAssets = func.cacheImages(images.files);
@@ -19,14 +27,18 @@ export default class App extends React.Component {
     });
   }
 
-  componentWillMount() {
-    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
-    this.preloadAssetsAsync();
-  }
-
   render() {
     const { isLoading } = this.state;
 
-    return isLoading ? <View /> : <Controls />;
+    if (isLoading) {
+      return (
+        <AppLoading
+          onFinish={() => this.setState({ isLoading: false })}
+          startAsync={this.preloadAssetsAsync}
+        />
+      );
+    }
+
+    return <Controls />;
   }
 }

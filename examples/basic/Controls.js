@@ -8,6 +8,7 @@ export default class Controls extends React.Component {
   componentDidMount() {
     this._subscribe();
   }
+
   componentWillUnmount() {
     this._unsubscribe();
   }
@@ -35,7 +36,8 @@ export default class Controls extends React.Component {
         style={{ flex: 1 }}
         onTouchesBegan={this.onTouchesBegan}
         onTouchesEnded={this.onTouchesEnded}
-        onTouchesCancelled={this.onTouchesEnded}>
+        onTouchesCancelled={this.onTouchesEnded}
+      >
         <GLView
           style={{ flex: 1 }}
           onContextCreate={context => (this.game = new Game({ context }))}

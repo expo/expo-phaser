@@ -96,7 +96,9 @@ export default class Playable {
 
   create = () => {
     const { game } = this;
-    game.stage.backgroundColor = '#4488AA';
+
+    // game.stage.backgroundColor = '#4488AA';
+    game.stage.backgroundColor = '#000';
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     /**
@@ -107,11 +109,13 @@ export default class Playable {
      *  backdrops using seamless textures as a source.
      *
      **/
-    //  The scrolling starfield background
+
+    // The scrolling starfield background
     // this.starfield = game.add.tileSprite(0, 0, this.width, this.height, 'starfield');
     this.starfield = game.add.sprite(0, 0, 'starfield');
     this.starfield.width = this.width;
     this.starfield.height = this.height;
+
     //  Our bullet group
     this.bullets = game.add.group();
     this.bullets.enableBody = true;
@@ -257,8 +261,8 @@ export default class Playable {
   };
 
   descend = () => {
-    // console.log('Loop');
-    // this.aliens.y += this.height * 0.0166666667;
+    console.log('Loop');
+    this.aliens.y += this.height * 0.0166666667;
   };
 
   collisionHandler = (bullet, alien) => {
