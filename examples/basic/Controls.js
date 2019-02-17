@@ -13,23 +13,28 @@ export default class Controls extends React.Component {
     this._unsubscribe();
   }
 
-  _subscribe = () => {
+  _subscribe() {
     Accelerometer.setUpdateInterval(16);
+
     this._subscription = Accelerometer.addListener(
       ({ x }) => this.game && this.game.updateControls(x)
     );
-  };
+  }
 
-  _unsubscribe = () => {
+  _unsubscribe() {
     Accelerometer.removeAllListeners();
+
     this._subscription && this._subscription.remove();
     this._subscription = null;
-  };
+  }
 
-  shouldComponentUpdate = () => false;
+  shouldComponentUpdate() {
+    return false;
+  }
 
   onTouchesBegan = () => this.game && this.game.onTouchesBegan();
   onTouchesEnded = () => this.game && this.game.onTouchesEnded();
+
   render() {
     return (
       <MultiTouchView

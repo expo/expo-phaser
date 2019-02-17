@@ -1,6 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
-import { AppLoading, Asset, ScreenOrientation } from 'expo';
+import { AppLoading, ScreenOrientation } from 'expo';
 
 import { func, images } from './utils/library';
 

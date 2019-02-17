@@ -1,4 +1,3 @@
-import React from 'react';
 import { ScreenOrientation } from 'expo';
 import ExpoPhaser from 'expo-phaser';
 
@@ -15,11 +14,17 @@ export default class Game {
     game.state.start('Playable');
   }
 
-  updateControls = velocity => {
+  updateControls(velocity) {
     if (this.playable) {
       this.playable.updateControls({ velocity });
     }
-  };
-  onTouchesBegan = () => this.playable && this.playable.onTouchesBegan();
-  onTouchesEnded = () => this.playable && this.playable.onTouchesEnded();
+  }
+
+  onTouchesBegan() {
+    return this.playable && this.playable.onTouchesBegan();
+  }
+
+  onTouchesEnded() {
+    return this.playable && this.playable.onTouchesEnded();
+  }
 }
