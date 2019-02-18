@@ -288,7 +288,6 @@ export default class Playable {
 
     // increase the kills
     this.kills += 1;
-    console.log(this.kills);
 
     // increase the score
     this.score += 20;
@@ -313,7 +312,7 @@ export default class Playable {
       // this.stateText.visible = true;
 
       // the "click to restart" handler
-      console.log('you won!');
+      // console.log('you won!');
       this.game.input.onTap.addOnce(this.restart, this);
     }
   }
@@ -343,6 +342,7 @@ export default class Playable {
       // this.stateText.visible = true;
 
       // the "click to restart" handler
+      // console.log('you lost!');
       this.game.input.onTap.addOnce(this.restart, this);
       // game.input.onTap.addOnce(this.restart, this);
     }
@@ -383,8 +383,6 @@ export default class Playable {
       bullet = bullets.getFirstExists(false);
 
       if (bullet) {
-        // console.log('fired shot');
-        // console.log(this.shotsFired);
         this.shotsFired += 1;
         // and fire it
         bullet.reset(player.x, player.y + 8 * scale);
