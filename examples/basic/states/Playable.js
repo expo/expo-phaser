@@ -21,6 +21,10 @@ export default class Playable {
     this.updateStats = updateStats;
 
     // game config
+    this.startLives = 3;
+    this.alienRows = 4;
+
+    // default states
     this.aliens = null;
     this.bullets = null;
     this.bulletTime = 0;
@@ -32,8 +36,6 @@ export default class Playable {
     this.lives = null;
     this.livingEnemies = [];
     this.player = null;
-    this.scoreString = '';
-    this.scoreText = null;
     this.starfield = null;
     this.stateText = null;
 
@@ -70,6 +72,7 @@ export default class Playable {
 
   updateControls({ velocity }) {
     const { player } = this;
+
     if (player && player.alive) {
       const speed = Math.floor(velocity * Settings.playerSpeed);
 
@@ -100,7 +103,7 @@ export default class Playable {
   }
 
   create() {
-    const { game } = this;
+    const { game, startLives } = this;
     const { world } = game;
     const { height, width } = world;
 
@@ -161,10 +164,6 @@ export default class Playable {
 
     this.createAliens();
 
-    // the score
-    this.scoreString = 'Score : ';
-    // this.scoreText = game.add.text(10, 10, this.scoreString + this.score, { font: '34px Arial', fill: '#fff' });
-
     // lives
     this.lives = game.add.group();
     // game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
@@ -174,13 +173,14 @@ export default class Playable {
     // this.stateText.anchor.setTo(0.5, 0.5);
     // this.stateText.visible = false;
 
-    const lives = 3;
     const shipOffset = width * 0.125;
-    const initialshipXoffset = width - shipOffset * lives;
+    console.log(shipOffset);
+    console.log(width);
+    const initialshipXoffset = width - shipOffset * startLives;
     const shipInterval = 30 * scale;
     const shipY = 60 * scale;
 
-    for (let i = 0; i < lives; i += 1) {
+    for (let i = 0; i < startLives; i += 1) {
       const ship = this.lives.create(
         initialshipXoffset + shipInterval * i,
         shipY,
@@ -209,7 +209,7 @@ export default class Playable {
   }
 
   createAliens() {
-    const { game } = this;
+    const { alienRows, game } = this;
     const { world } = game;
     const { height, width } = world;
 
@@ -222,8 +222,8 @@ export default class Playable {
     );
 
     const dimensions = {
-      rows: 4,
-      columns: aliens
+      columns: aliens,
+      rows: alienRows
     };
     const alienOffset = {
       x: alienAvailableSpace / dimensions.columns
@@ -291,7 +291,6 @@ export default class Playable {
 
     // increase the score
     this.score += 20;
-    // this.scoreText.text = this.scoreString + this.score;
 
     // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
@@ -303,7 +302,6 @@ export default class Playable {
 
     if (this.aliens.countLiving() === 0) {
       this.score += 1000;
-      // this.scoreText.text = this.scoreString + this.score;
 
       this.player.kill();
       this.enemyBullets.callAll('kill');
@@ -438,8 +436,8 @@ export default class Playable {
       enemyHitsPlayer,
       firingTimer,
       game,
-      starfield,
-      player
+      player,
+      starfield
     } = this;
     // scroll the background
 
