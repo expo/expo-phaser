@@ -1,5 +1,6 @@
 import React from 'react';
-import { AppLoading, ScreenOrientation } from 'expo';
+import { StyleSheet, Text, View } from 'react-native';
+import { AppLoading, Constants, ScreenOrientation } from 'expo';
 
 import { func, images } from './utils/library';
 
@@ -12,10 +13,14 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
-      isLoading: true
+      isLoading: true,
+      kills: 0,
+      score: 0,
+      shotsFired: 0
     };
 
     this.preloadAssetsAsync = this.preloadAssetsAsync.bind(this);
+    this.updateStats = this.updateStats.bind(this);
   }
 
   async preloadAssetsAsync() {
@@ -26,8 +31,16 @@ export default class App extends React.Component {
     });
   }
 
+  updateStats(data) {
+    this.setState({
+      kills: data.kills,
+      score: data.score,
+      shotsFired: data.shotsFired
+    });
+  }
+
   render() {
-    const { isLoading } = this.state;
+    const { isLoading, kills, score, shotsFired } = this.state;
 
     if (isLoading) {
       return (
@@ -38,6 +51,34 @@ export default class App extends React.Component {
       );
     }
 
-    return <Controls />;
+    const accuracy = ((kills / shotsFired) * 100).toFixed(2);
+    const displayAccuracy = shotsFired > 0 ? `Accuracy: ${accuracy}%` : null;
+
+    return (
+      <React.Fragment>
+        <Controls updateStats={this.updateStats} />
+
+        <View style={styles.container}>
+          <Text style={styles.text}>{`Score: ${score}`}</Text>
+          <Text style={styles.text}>{`Kills: ${kills}`}</Text>
+          <Text style={styles.text}>{`Shots Fired: ${shotsFired}`}</Text>
+          {displayAccuracy && (
+            <Text style={styles.text}>{displayAccuracy}</Text>
+          )}
+        </View>
+      </React.Fragment>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    left: 16,
+    position: 'absolute',
+    top: Constants.statusBarHeight,
+    width: '100%'
+  },
+  text: {
+    color: '#fff'
+  }
+});

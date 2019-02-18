@@ -1,5 +1,6 @@
 import React from 'react';
 import { Accelerometer, GLView } from 'expo';
+import PropTypes from 'prop-types';
 import { MultiTouchView } from 'expo-multi-touch';
 
 import Game from './Game';
@@ -41,7 +42,9 @@ export default class Controls extends React.Component {
   }
 
   setupGame(context) {
-    this.game = new Game({ context });
+    const { updateStats } = this.props;
+
+    this.game = new Game({ context, updateStats });
   }
 
   subscribe() {
@@ -66,14 +69,19 @@ export default class Controls extends React.Component {
       <MultiTouchView
         style={{ flex: 1 }}
         onTouchesBegan={this.onTouchesBegan}
-        onTouchesEnded={this.onTouchesEnded}
         onTouchesCancelled={this.onTouchesEnded}
+        onTouchesEnded={this.onTouchesEnded}
       >
         <GLView
           onContextCreate={context => this.setupGame(context)}
-          style={{ flex: 1 }}
+          style={{ backgroundColor: '#000', flex: 1 }}
         />
       </MultiTouchView>
     );
   }
 }
+
+Controls.propTypes = {
+  // required
+  updateStats: PropTypes.func.isRequired
+};

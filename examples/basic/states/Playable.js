@@ -14,23 +14,33 @@ class SettingsConfig {
 const Settings = new SettingsConfig();
 
 export default class Playable {
-  constructor({ game, context }) {
-    this.player = null;
+  constructor({ game, context, updateStats }) {
+    // prevent warnings for Phaser.Cache
+    console.disableYellowBox = true;
+
+    this.updateStats = updateStats;
+
+    // game config
     this.aliens = null;
     this.bullets = null;
     this.bulletTime = 0;
-    // this.cursors;
-    // this.fireButton;
+    // this.cursors = null;
+    this.enemyBullet = null;
     this.explosions = null;
-    this.starfield = null;
-    this.score = 0;
+    // this.fireButton = null;
+    this.firingTimer = 0;
+    this.lives = null;
+    this.livingEnemies = [];
+    this.player = null;
     this.scoreString = '';
     this.scoreText = null;
-    this.lives = null;
-    this.enemyBullet = null;
-    this.firingTimer = 0;
+    this.starfield = null;
     this.stateText = null;
-    this.livingEnemies = [];
+
+    // player stats
+    this.kills = 0;
+    this.shotsFired = 0;
+    this.score = 0;
 
     this.game = game;
     this.context = context;
@@ -39,8 +49,6 @@ export default class Playable {
   preload() {
     const { game } = this;
     const { files } = images;
-
-    console.disableYellowBox = true;
 
     game.load.image('bullet', func.uri(files.bullet));
     game.load.image('enemyBullet', func.uri(files.enemyBullet));
@@ -278,12 +286,17 @@ export default class Playable {
     bullet.kill();
     alien.kill();
 
+    // increase the kills
+    this.kills += 1;
+    console.log(this.kills);
+
     // increase the score
     this.score += 20;
     // this.scoreText.text = this.scoreString + this.score;
 
     // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
+
     if (explosion) {
       explosion.reset(alien.body.x, alien.body.y);
       explosion.play('kaboom', 30, false, true);
@@ -293,17 +306,19 @@ export default class Playable {
       this.score += 1000;
       // this.scoreText.text = this.scoreString + this.score;
 
-      this.enemyBullets.callAll('kill', this);
+      this.player.kill();
+      this.enemyBullets.callAll('kill');
+
       // this.stateText.text = " You Won, \n Click to restart";
       // this.stateText.visible = true;
 
       // the "click to restart" handler
+      console.log('you won!');
       this.game.input.onTap.addOnce(this.restart, this);
     }
   }
 
   enemyHitsPlayer(player, bullet) {
-    const { game } = this;
     bullet.kill();
 
     this.live = this.lives.getFirstAlive();
@@ -318,6 +333,7 @@ export default class Playable {
       explosion.reset(player.body.x, player.body.y);
       explosion.play('kaboom', 30, false, true);
     }
+
     // when the player dies
     if (this.lives.countLiving() < 1) {
       player.kill();
@@ -327,7 +343,8 @@ export default class Playable {
       // this.stateText.visible = true;
 
       // the "click to restart" handler
-      game.input.onTap.addOnce(this.restart, this);
+      this.game.input.onTap.addOnce(this.restart, this);
+      // game.input.onTap.addOnce(this.restart, this);
     }
   }
 
@@ -359,12 +376,16 @@ export default class Playable {
   fireBullet() {
     const { bullets, game, player } = this;
     let { bulletTime, bullet } = this;
+
     // to avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTime) {
       // grab the first bullet we can from the pool
       bullet = bullets.getFirstExists(false);
 
       if (bullet) {
+        // console.log('fired shot');
+        // console.log(this.shotsFired);
+        this.shotsFired += 1;
         // and fire it
         bullet.reset(player.x, player.y + 8 * scale);
         bullet.body.velocity.y = -400 * scale;
@@ -380,14 +401,14 @@ export default class Playable {
   }
 
   restart() {
-    const { lives, aliens, createAliens, player } = this;
+    const { lives, aliens, player } = this;
     // a new level starts
 
     // resets the life count
     lives.callAll('revive');
     // and brings the aliens back from the dead :)
     aliens.removeAll();
-    createAliens();
+    this.createAliens();
 
     // revives the player
     player.revive();
@@ -412,21 +433,27 @@ export default class Playable {
 
   update() {
     const {
-      starfield,
-      player,
-      game,
-      firingTimer,
-      bullets,
       aliens,
+      bullets,
       collisionHandler,
       enemyBullets,
-      enemyHitsPlayer
+      enemyHitsPlayer,
+      firingTimer,
+      game,
+      starfield,
+      player
     } = this;
     // scroll the background
 
     if (starfield.tilePosition) {
       starfield.tilePosition.y += 2;
     }
+
+    this.updateStats({
+      kills: this.kills,
+      score: this.score,
+      shotsFired: this.shotsFired
+    });
 
     if (player.alive) {
       // firing?

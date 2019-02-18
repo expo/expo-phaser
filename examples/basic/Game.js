@@ -1,14 +1,13 @@
-import { ScreenOrientation } from 'expo';
 import ExpoPhaser from 'expo-phaser';
 
 import Playable from './states/Playable';
 
 export default class Game {
-  constructor({ context }) {
-    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
+  constructor(props) {
+    const { context, updateStats } = props;
 
     const game = ExpoPhaser.game({ context });
-    this.playable = new Playable({ game, context });
+    this.playable = new Playable({ game, context, updateStats });
 
     game.state.add('Playable', this.playable);
     game.state.start('Playable');
