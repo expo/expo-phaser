@@ -4,6 +4,12 @@
 
 Tools for using Phaser-ce to build native 2D games in Expo 👾
 
+- [Installation](#installation)
+- [Usage](#usage)
+- [Functions](#functions)
+- [Example](#example)
+- [Demo](#demo)
+
 ### Installation
 
 ```bash
@@ -15,7 +21,7 @@ yarn add expo-phaser
 Import the library into your JavaScript file:
 
 ```js
-import ExpoPhaser from 'expo-phaser';
+import ExpoPhaser from "expo-phaser";
 ```
 
 ## Functions
@@ -43,7 +49,7 @@ that draws into it.
 | -------- | :------------------------------------------------------------: | ------------------------------------------------ |
 | game     | [`Phaser.Game`](https://phaser.io/docs/2.6.2/Phaser.Game.html) | The Phaser-ce game used for rendering game logic |
 
-#### Example
+## Example
 
 ```js
 const game = ExpoPhaser.game({ context });
@@ -53,14 +59,14 @@ const game = ExpoPhaser.game({ context });
 
 Under the hood, ExpoPhaser is maintaining global instances of a few libraries.
 
-* [Custom Phaser Pixi.js](https://github.com/photonstorm/phaser-ce/tree/master/src/pixi)
-* [Custom Phaser p2.js](https://github.com/photonstorm/phaser-ce/blob/master/build/custom/p2.js)
-* [Phaser-ce (Community Edition)](https://github.com/photonstorm/phaser-ce)
+- [Custom Phaser Pixi.js](https://github.com/photonstorm/phaser-ce/tree/master/src/pixi)
+- [Custom Phaser p2.js](https://github.com/photonstorm/phaser-ce/blob/master/build/custom/p2.js)
+- [Phaser-ce (Community Edition)](https://github.com/photonstorm/phaser-ce)
 
 ```js
-window.PIXI = require('phaser-ce/build/custom/pixi');
-window.p2 = require('phaser-ce/build/custom/p2');
-window.Phaser = require('phaser-ce/build/phaser');
+window.PIXI = require("phaser-ce/build/custom/pixi");
+window.p2 = require("phaser-ce/build/custom/p2");
+window.Phaser = require("phaser-ce/build/phaser");
 ```
 
 Other libs can be included but are not required. For instance you can import the custom Creature lib the same way.
@@ -70,7 +76,7 @@ Finally when a new instance of `Expo.Game` is created, we set the `document.read
 
 ```js
 global.__context = context;
-global.document.readyState = 'complete';
+global.document.readyState = "complete";
 ```
 
 Then we create a standard render loop and call `context.endFrameEXP()` to flush the frame queue and render our context through `EXGL`.
@@ -104,19 +110,19 @@ return (
 function startGame({ context }) {
   const game = ExpoPhaser.game({ context });
 
-  game.state.add('Playable', {
+  game.state.add("Playable", {
     preload: function() {
       /// This function cannot be async, preload all assets before getting here.
       game.load.image(
-        'man',
-        Expo.Asset.fromModule(Assets['man.json']).localUri,
+        "man",
+        Expo.Asset.fromModule(Assets["man.json"]).localUri
       );
     },
     create: function() {},
-    update: function() {},
+    update: function() {}
   });
 
-  game.state.start('Playable');
+  game.state.start("Playable");
 }
 ```
 
@@ -128,7 +134,7 @@ Expo has a convenient way of saving reference. We preload an `Expo.Asset` then i
 In a standard Phaser app we would load an asset like this:
 
 ```js
-game.load.image('man', './assets/man.png');
+game.load.image("man", "./assets/man.png");
 ```
 
 In expo we would load it like this:
@@ -147,13 +153,13 @@ game.load.image('man', preloadedExpoAsset.localUri);
 This example shows how to load an animated texture atlas and apply arcade physics to it.
 
 ```js
-import React from 'react';
-import Expo from 'expo';
-import ExpoPhaser from 'expo-phaser';
+import React from "react";
+import Expo from "expo";
+import ExpoPhaser from "expo-phaser";
 
 const Assets = {
-  'man.png': require('./assets/man.png'),
-  'man.json': require('./assets/man.json'),
+  "man.png": require("./assets/man.png"),
+  "man.json": require("./assets/man.json")
 };
 
 export default class App extends React.Component {
@@ -184,27 +190,27 @@ export default class App extends React.Component {
 function startGame({ context }) {
   const game = ExpoPhaser.game({ context });
 
-  game.state.add('Playable', {
+  game.state.add("Playable", {
     preload: function() {
-      const atlas = Expo.Asset.fromModule(Assets['man.json']).localUri;
-      const texture = Expo.Asset.fromModule(Assets['man.png']).localUri;
-      game.load.atlasJSONHash('man', texture, atlas);
+      const atlas = Expo.Asset.fromModule(Assets["man.json"]).localUri;
+      const texture = Expo.Asset.fromModule(Assets["man.png"]).localUri;
+      game.load.atlasJSONHash("man", texture, atlas);
     },
     create: function() {
-      game.stage.backgroundColor = '#4488AA';
+      game.stage.backgroundColor = "#4488AA";
 
       game.physics.startSystem(Phaser.Physics.ARCADE);
 
       //  Set the world (global) gravity
       game.physics.arcade.gravity.y = 100;
 
-      const man = game.add.sprite(200, 200, 'man');
+      const man = game.add.sprite(200, 200, "man");
       game.physics.enable([man], Phaser.Physics.ARCADE);
 
       //  Here we add a new animation called 'run'
       //  We haven't specified any frames because it's using every frame in the texture atlas
 
-      man.animations.add('run');
+      man.animations.add("run");
       man.body.collideWorldBounds = true;
       man.body.bounce.y = 0.8;
       man.body.gravity.y = 200;
@@ -212,16 +218,17 @@ function startGame({ context }) {
       //  And this starts the animation playing by using its key ("run")
       //  15 is the frame rate (15fps)
       //  true means it will loop when it finishes
-      man.animations.play('run', 15, true);
+      man.animations.play("run", 15, true);
     },
-    update: function() {},
+    update: function() {}
   });
 
-  game.state.start('Playable');
+  game.state.start("Playable");
 }
 ```
 
 **note:** When working with `.json` asset inclusion, be sure to update the app.json file to handle `.json` appropriately.
+
 ```
 "packagerOpts": {
   "assetExts": [
@@ -229,3 +236,12 @@ function startGame({ context }) {
   ]
 },
 ```
+
+## Demo
+
+Within this repo is an [examples/basic](examples/basic) demo.
+
+<p align="left">
+  <img src="screenshots/screenshot1.png?raw=true" width="440" />
+  <img src="screenshots/screenshot2.png?raw=true" width="440" />
+</p>
