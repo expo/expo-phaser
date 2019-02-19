@@ -13,7 +13,7 @@
   "dependencies": {
     "expo": "^32.0.0",
     "expo-multi-touch": "0.0.0",
-    "expo-phaser": "../../expo-phaser-v0.0.0.tgz",
+    "expo-phaser": "../../expo-phaser-v0.0.1-alpha.0.tgz",
     "prop-types": "^15.7.2",
     "react": "16.5.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
