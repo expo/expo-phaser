@@ -4,10 +4,10 @@ import Playable from './states/Playable';
 
 export default class Game {
   constructor(props) {
-    const { context, updateStats } = props;
+    const { context, gamePause, updateStats } = props;
 
     const game = ExpoPhaser.game({ context });
-    this.playable = new Playable({ game, context, updateStats });
+    this.playable = new Playable({ context, game, gamePause, updateStats });
 
     game.state.add('Playable', this.playable);
     game.state.start('Playable');
@@ -36,5 +36,9 @@ export default class Game {
     }
 
     return this.playable.onTouchesEnded();
+  }
+
+  onTogglePause(paused) {
+    this.playable.pauseGame(paused);
   }
 }

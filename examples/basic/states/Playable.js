@@ -14,7 +14,7 @@ class SettingsConfig {
 const Settings = new SettingsConfig();
 
 export default class Playable {
-  constructor({ game, context, updateStats }) {
+  constructor({ context, game, gamePause, updateStats }) {
     // prevent warnings for Phaser.Cache
     console.disableYellowBox = true;
 
@@ -23,6 +23,7 @@ export default class Playable {
     // game config
     this.startLives = 3;
     this.alienRows = 4;
+    this.initialGameState = gamePause;
 
     // default states
     this.aliens = null;
@@ -102,6 +103,11 @@ export default class Playable {
     }
   }
 
+  pauseGame(paused) {
+    const { game } = this;
+    game.paused = paused;
+  }
+
   create() {
     const { game, startLives } = this;
     const { world } = game;
@@ -110,6 +116,9 @@ export default class Playable {
     // game.stage.backgroundColor = '#4488AA';
     game.stage.backgroundColor = '#000';
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // initial game state paused?
+    game.paused = this.initialGameState;
 
     /**
      *
@@ -174,8 +183,6 @@ export default class Playable {
     // this.stateText.visible = false;
 
     const shipOffset = width * 0.125;
-    console.log(shipOffset);
-    console.log(width);
     const initialshipXoffset = width - shipOffset * startLives;
     const shipInterval = 30 * scale;
     const shipY = 60 * scale;
@@ -310,7 +317,9 @@ export default class Playable {
       // this.stateText.visible = true;
 
       // the "click to restart" handler
-      // console.log('you won!');
+      console.log('--------------------');
+      console.log('you beat this level!');
+      console.log('--------------------');
       this.game.input.onTap.addOnce(this.restart, this);
     }
   }
@@ -340,7 +349,9 @@ export default class Playable {
       // this.stateText.visible = true;
 
       // the "click to restart" handler
-      // console.log('you lost!');
+      console.log('--------------------');
+      console.log('you lost, game over!');
+      console.log('--------------------');
       this.game.input.onTap.addOnce(this.restart, this);
       // game.input.onTap.addOnce(this.restart, this);
     }

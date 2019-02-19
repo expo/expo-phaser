@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { AppLoading, Constants, ScreenOrientation } from 'expo';
 
 import { func, images } from './utils/library';
@@ -13,6 +13,7 @@ export default class App extends React.Component {
     super(props);
 
     this.state = {
+      gamePause: false,
       isLoading: true,
       kills: 0,
       score: 0,
@@ -21,6 +22,7 @@ export default class App extends React.Component {
 
     this.preloadAssetsAsync = this.preloadAssetsAsync.bind(this);
     this.updateStats = this.updateStats.bind(this);
+    this.handleTogglePause = this.handleTogglePause.bind(this);
   }
 
   async preloadAssetsAsync() {
@@ -39,8 +41,14 @@ export default class App extends React.Component {
     });
   }
 
+  handleTogglePause() {
+    this.setState(prevState => ({
+      gamePause: !prevState.gamePause
+    }));
+  }
+
   render() {
-    const { isLoading, kills, score, shotsFired } = this.state;
+    const { gamePause, isLoading, kills, score, shotsFired } = this.state;
 
     if (isLoading) {
       return (
@@ -56,7 +64,7 @@ export default class App extends React.Component {
 
     return (
       <React.Fragment>
-        <Controls updateStats={this.updateStats} />
+        <Controls gamePause={gamePause} updateStats={this.updateStats} />
 
         <View style={styles.container}>
           <Text style={styles.text}>{`Score: ${score}`}</Text>
@@ -65,6 +73,18 @@ export default class App extends React.Component {
           {displayAccuracy && (
             <Text style={styles.text}>{displayAccuracy}</Text>
           )}
+        </View>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={this.handleTogglePause}
+            style={styles.footerButton}
+          >
+            <Text style={styles.footerText}>
+              {gamePause ? 'Play' : 'Pause'}
+            </Text>
+          </TouchableOpacity>
         </View>
       </React.Fragment>
     );
@@ -80,5 +100,24 @@ const styles = StyleSheet.create({
   },
   text: {
     color: '#fff'
+  },
+  footer: {
+    alignItems: 'center',
+    bottom: 32,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    width: '100%'
+  },
+  footerButton: {
+    backgroundColor: '#323031',
+    borderRadius: 4,
+    marginHorizontal: 16,
+    padding: 16,
+    width: 76
+  },
+  footerText: {
+    color: '#fff',
+    textAlign: 'center'
   }
 });

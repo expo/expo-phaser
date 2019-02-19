@@ -17,8 +17,16 @@ export default class Controls extends React.Component {
     this.subscribe();
   }
 
-  shouldComponentUpdate() {
-    return false;
+  // shouldComponentUpdate() {
+  //   return false;
+  // }
+
+  componentDidUpdate(prevProps) {
+    const { gamePause } = this.props;
+
+    if (prevProps.gamePause !== gamePause) {
+      this.game.onTogglePause(gamePause);
+    }
   }
 
   componentWillUnmount() {
@@ -42,9 +50,9 @@ export default class Controls extends React.Component {
   }
 
   setupGame(context) {
-    const { updateStats } = this.props;
+    const { gamePause, updateStats } = this.props;
 
-    this.game = new Game({ context, updateStats });
+    this.game = new Game({ context, gamePause, updateStats });
   }
 
   subscribe() {
@@ -67,10 +75,10 @@ export default class Controls extends React.Component {
   render() {
     return (
       <MultiTouchView
-        style={{ flex: 1 }}
         onTouchesBegan={this.onTouchesBegan}
         onTouchesCancelled={this.onTouchesEnded}
         onTouchesEnded={this.onTouchesEnded}
+        style={{ flex: 1 }}
       >
         <GLView
           onContextCreate={context => this.setupGame(context)}
@@ -83,5 +91,6 @@ export default class Controls extends React.Component {
 
 Controls.propTypes = {
   // required
+  gamePause: PropTypes.bool.isRequired,
   updateStats: PropTypes.func.isRequired
 };
