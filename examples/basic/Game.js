@@ -1,24 +1,44 @@
-import Expo from 'expo';
 import ExpoPhaser from 'expo-phaser';
-import React from 'react';
 
 import Playable from './states/Playable';
 
 export default class Game {
-  constructor({ context }) {
-    Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
+  constructor(props) {
+    const { context, gamePause, updateStats } = props;
 
     const game = ExpoPhaser.game({ context });
-    this.playable = new Playable({ game, context });
+    this.playable = new Playable({ context, game, gamePause, updateStats });
+
     game.state.add('Playable', this.playable);
     game.state.start('Playable');
+
+    this.onTouchesBegan = this.onTouchesBegan.bind(this);
+    this.onTouchesEnded = this.onTouchesEnded.bind(this);
   }
 
-  updateControls = velocity => {
+  updateControls(velocity) {
     if (this.playable) {
       this.playable.updateControls({ velocity });
     }
-  };
-  onTouchesBegan = () => this.playable && this.playable.onTouchesBegan();
-  onTouchesEnded = () => this.playable && this.playable.onTouchesEnded();
+  }
+
+  onTouchesBegan() {
+    if (!this.playable) {
+      return false;
+    }
+
+    return this.playable.onTouchesBegan();
+  }
+
+  onTouchesEnded() {
+    if (!this.playable) {
+      return false;
+    }
+
+    return this.playable.onTouchesEnded();
+  }
+
+  onTogglePause(paused) {
+    this.playable.pauseGame(paused);
+  }
 }

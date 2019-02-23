@@ -1,84 +1,98 @@
-import React from 'react';
-
-import Assets from '../Assets';
-import uri from '../utils/uri';
 import { PixelRatio } from 'react-native';
+import { func, images } from '../utils/library';
 
 const scale = PixelRatio.get();
+
 class SettingsConfig {
-  invader = 32; // * scale;
-  explosion = 128; // * scale;
-  playerSpeed = 600;
+  constructor() {
+    this.explosion = 128; // * scale;
+    this.invader = 32; // * scale;
+    this.playerSpeed = 600;
+  }
 }
 
 const Settings = new SettingsConfig();
 
 export default class Playable {
-  player;
-  aliens;
-  bullets;
-  bulletTime = 0;
-  //   cursors;
-  //   fireButton;
-  explosions;
-  starfield;
-  score = 0;
-  scoreString = '';
-  scoreText;
-  lives;
-  enemyBullet;
-  firingTimer = 0;
-  stateText;
-  livingEnemies = [];
+  constructor({ context, game, gamePause, updateStats }) {
+    // prevent warnings for Phaser.Cache
+    console.disableYellowBox = true;
 
-  constructor({ game, context }) {
+    this.updateStats = updateStats;
+
+    // game config
+    this.startLives = 3;
+    this.alienRows = 4;
+    this.initialGameState = gamePause;
+
+    // default states
+    this.aliens = null;
+    this.bullets = null;
+    this.bulletTime = 0;
+    // this.cursors = null;
+    this.enemyBullet = null;
+    this.explosions = null;
+    // this.fireButton = null;
+    this.firingTimer = 0;
+    this.lives = null;
+    this.livingEnemies = [];
+    this.player = null;
+    this.starfield = null;
+    this.stateText = null;
+
+    // player stats
+    this.kills = 0;
+    this.shotsFired = 0;
+    this.score = 0;
+
     this.game = game;
     this.context = context;
   }
 
-  preload = () => {
+  preload() {
     const { game } = this;
-    game.load.image('bullet', uri(Assets.files['bullet.png']));
-    game.load.image('enemyBullet', uri(Assets.files['enemy-bullet.png']));
+    const { files } = images;
+
+    game.load.image('bullet', func.uri(files.bullet));
+    game.load.image('enemyBullet', func.uri(files.enemyBullet));
     game.load.spritesheet(
       'invader',
-      uri(Assets.files['invader32x32x4.png']),
+      func.uri(files.invader),
       Settings.invader,
       Settings.invader
     );
-    game.load.image('ship', uri(Assets.files['player.png']));
+    game.load.image('ship', func.uri(files.player));
     game.load.spritesheet(
       'kaboom',
-      uri(Assets.files['explode.png']),
+      func.uri(files.explode),
       Settings.explosion,
       Settings.explosion
     );
-    game.load.image('starfield', uri(Assets.files['starfield.png']));
-  };
+    game.load.image('starfield', func.uri(files.starfield));
+  }
 
-  updateControls = ({ velocity }) => {
+  updateControls({ velocity }) {
     const { player } = this;
+
     if (player && player.alive) {
-      let speed = Math.floor(velocity * Settings.playerSpeed);
-      //  Reset the player, then check for movement keys
+      const speed = Math.floor(velocity * Settings.playerSpeed);
+
+      // reset the player, then check for movement keys
       player.body.velocity.setTo(0, 0);
       player.body.velocity.x = speed;
     }
-  };
+  }
 
-  get width() {
-    return this.game.world.width;
-  }
-  get height() {
-    return this.game.world.height;
-  }
-  scaleNode = node => {
+  scaleNode(node) {
     node.width *= scale;
     node.height *= scale;
-  };
+  }
 
-  onTouchesBegan = () => (this.pressing = true);
-  onTouchesEnded = () => {
+  onTouchesBegan() {
+    this.pressing = true;
+  }
+
+  onTouchesEnded() {
     this.pressing = false;
     if (this.player) {
       if (this.player.alive) {
@@ -87,12 +101,24 @@ export default class Playable {
         this.restart();
       }
     }
-  };
+  }
 
-  create = () => {
+  pauseGame(paused) {
     const { game } = this;
-    game.stage.backgroundColor = '#4488AA';
+    game.paused = paused;
+  }
+
+  create() {
+    const { game, startLives } = this;
+    const { world } = game;
+    const { height, width } = world;
+
+    // game.stage.backgroundColor = '#4488AA';
+    game.stage.backgroundColor = '#000';
     game.physics.startSystem(Phaser.Physics.ARCADE);
+
+    // initial game state paused?
+    game.paused = this.initialGameState;
 
     /**
      *
@@ -101,13 +127,15 @@ export default class Playable {
      *  Textures will automatically wrap and are designed so that you can create game
      *  backdrops using seamless textures as a source.
      *
-     **/
-    //  The scrolling starfield background
-    // this.starfield = game.add.tileSprite(0, 0, this.width, this.height, 'starfield');
+     * */
+
+    // the scrolling starfield background
+    // this.starfield = game.add.tileSprite(0, 0, width, height, 'starfield');
     this.starfield = game.add.sprite(0, 0, 'starfield');
-    this.starfield.width = this.width;
-    this.starfield.height = this.height;
-    //  Our bullet group
+    this.starfield.height = height;
+    this.starfield.width = width;
+
+    // our bullet group
     this.bullets = game.add.group();
     this.bullets.enableBody = true;
     this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -119,7 +147,7 @@ export default class Playable {
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('checkWorldBounds', true);
 
-    // The enemy's bullets
+    // the enemy's bullets
     this.enemyBullets = game.add.group();
     this.enemyBullets.enableBody = true;
     this.enemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -131,47 +159,49 @@ export default class Playable {
     this.enemyBullets.setAll('outOfBoundsKill', true);
     this.enemyBullets.setAll('checkWorldBounds', true);
 
-    //  The hero!
-    this.player = game.add.sprite(this.width * 0.5, this.height * 0.833333333, 'ship');
+    // the hero!
+    this.player = game.add.sprite(width * 0.5, height * 0.833333333, 'ship');
+
     this.player.anchor.setTo(0.5, 0.5);
     this.scaleNode(this.player);
     game.physics.enable(this.player, Phaser.Physics.ARCADE);
 
-    //  The baddies!
+    // the baddies!
     this.aliens = game.add.group();
     this.aliens.enableBody = true;
     this.aliens.physicsBodyType = Phaser.Physics.ARCADE;
 
     this.createAliens();
 
-    //  The score
-    this.scoreString = 'Score : ';
-    // this.scoreText = game.add.text(10, 10, this.scoreString + this.score, { font: '34px Arial', fill: '#fff' });
-
-    //  Lives
+    // lives
     this.lives = game.add.group();
     // game.add.text(game.world.width - 100, 10, 'Lives : ', { font: '34px Arial', fill: '#fff' });
 
-    //  Text
+    // text
     // this.stateText = game.add.text(game.world.centerX,game.world.centerY,' ', { font: '84px Arial', fill: '#fff' });
     // this.stateText.anchor.setTo(0.5, 0.5);
     // this.stateText.visible = false;
 
-    const lives = 3;
-    const shipOffset = this.width * 0.125;
-    const initialshipXoffset = this.width - shipOffset * lives;
+    const shipOffset = width * 0.125;
+    const initialshipXoffset = width - shipOffset * startLives;
     const shipInterval = 30 * scale;
     const shipY = 60 * scale;
-    for (var i = 0; i < lives; i++) {
-      var ship = this.lives.create(initialshipXoffset + shipInterval * i, shipY, 'ship');
+
+    for (let i = 0; i < startLives; i += 1) {
+      const ship = this.lives.create(
+        initialshipXoffset + shipInterval * i,
+        shipY,
+        'ship'
+      );
       this.scaleNode(ship);
       ship.anchor.setTo(0.5, 0.5);
       ship.angle = 90;
       ship.alpha = 0.4;
     }
 
-    //  An explosion pool
+    // an explosion pool
     this.explosions = game.add.group();
+
     // this.explosions.scale = scale;
     this.explosions.createMultiple(30, 'kaboom');
     this.explosions.setAll('height', 128 * scale);
@@ -180,28 +210,39 @@ export default class Playable {
 
     this.explosions.forEach(this.setupInvader, this);
 
-    //  And some controls to play the game with
+    // and some controls to play the game with
     // this.cursors = game.input.keyboard.createCursorKeys();
     // this.fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-  };
+  }
 
-  createAliens = () => {
-    const alienDelta = this.width * 0.25;
-    const alienAvailableSpace = this.width - alienDelta;
+  createAliens() {
+    const { alienRows, game } = this;
+    const { world } = game;
+    const { height, width } = world;
+
+    const alienDelta = width * 0.25;
+    const alienAvailableSpace = width - alienDelta;
     const alienWidth = 32 * scale;
     const alienPadding = 12;
-    const aliens = Math.floor(alienAvailableSpace / (alienPadding + alienWidth));
+    const aliens = Math.floor(
+      alienAvailableSpace / (alienPadding + alienWidth)
+    );
 
     const dimensions = {
-      rows: 4,
       columns: aliens,
+      rows: alienRows
     };
     const alienOffset = {
-      x: alienAvailableSpace / dimensions.columns,
+      x: alienAvailableSpace / dimensions.columns
     };
-    for (let y = 0; y < dimensions.rows; y++) {
-      for (let x = 0; x < dimensions.columns; x++) {
-        const alien = this.aliens.create(x * alienOffset.x, y * alienOffset.x, 'invader');
+
+    for (let y = 0; y < dimensions.rows; y += 1) {
+      for (let x = 0; x < dimensions.columns; x += 1) {
+        const alien = this.aliens.create(
+          x * alienOffset.x,
+          y * alienOffset.x,
+          'invader'
+        );
         this.scaleNode(alien);
         alien.anchor.setTo(0.5, 0.5);
         alien.animations.add('fly', [0, 1, 2, 3], 20, true);
@@ -212,13 +253,14 @@ export default class Playable {
 
     // const alienOffset = this.game.world.width
     this.aliens.x = alienWidth / 2;
-    this.aliens.y = this.height * 0.0625;
+    this.aliens.y = height * 0.0625;
 
-    //  All this does is basically start the invaders moving. Notice we're moving the Group they belong to, rather than the invaders directly.
+    // all this does is basically start the invaders moving. notice we're
+    // moving the Group they belong to, rather than the invaders directly.
     const tween = this.game.add
       .tween(this.aliens)
       .to(
-        { x: this.width - alienAvailableSpace + alienWidth / 2 },
+        { x: width - alienAvailableSpace + alienWidth / 2 },
         2000,
         Phaser.Easing.Linear.None,
         true,
@@ -227,51 +269,62 @@ export default class Playable {
         true
       );
 
-    //  When the tween loops it calls descend
+    // when the tween loops it calls descend
     tween.onRepeat.add(this.descend, this);
-  };
+  }
 
-  setupInvader = invader => {
+  setupInvader(invader) {
     invader.anchor.x = 0.5;
     invader.anchor.y = 0.5;
     invader.animations.add('kaboom');
-  };
+  }
 
-  descend = () => {
+  descend() {
+    const { game } = this;
+    const { world } = game;
+    const { height } = world;
+
     console.log('Loop');
-    this.aliens.y += this.height * 0.0166666667;
-  };
+    this.aliens.y += height * 0.0166666667;
+  }
 
-  collisionHandler = (bullet, alien) => {
-    //  When a bullet hits an alien we kill them both
+  collisionHandler(bullet, alien) {
+    // when a bullet hits an alien we kill them both
     bullet.kill();
     alien.kill();
 
-    //  Increase the score
-    this.score += 20;
-    // this.scoreText.text = this.scoreString + this.score;
+    // increase the kills
+    this.kills += 1;
 
-    //  And create an explosion :)
+    // increase the score
+    this.score += 20;
+
+    // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
+
     if (explosion) {
       explosion.reset(alien.body.x, alien.body.y);
       explosion.play('kaboom', 30, false, true);
     }
-    if (this.aliens.countLiving() == 0) {
-      this.score += 1000;
-      // this.scoreText.text = this.scoreString + this.score;
 
-      this.enemyBullets.callAll('kill', this);
+    if (this.aliens.countLiving() === 0) {
+      this.score += 1000;
+
+      this.player.kill();
+      this.enemyBullets.callAll('kill');
+
       // this.stateText.text = " You Won, \n Click to restart";
       // this.stateText.visible = true;
 
-      //the "click to restart" handler
+      // the "click to restart" handler
+      console.log('--------------------');
+      console.log('you beat this level!');
+      console.log('--------------------');
       this.game.input.onTap.addOnce(this.restart, this);
     }
-  };
+  }
 
-  enemyHitsPlayer = (player, bullet) => {
-    const { game } = this;
+  enemyHitsPlayer(player, bullet) {
     bullet.kill();
 
     this.live = this.lives.getFirstAlive();
@@ -280,13 +333,14 @@ export default class Playable {
       this.live.kill();
     }
 
-    //  And create an explosion :)
+    // and create an explosion :)
     const explosion = this.explosions.getFirstExists(false);
     if (explosion) {
       explosion.reset(player.body.x, player.body.y);
       explosion.play('kaboom', 30, false, true);
     }
-    // When the player dies
+
+    // when the player dies
     if (this.lives.countLiving() < 1) {
       player.kill();
       this.enemyBullets.callAll('kill');
@@ -294,16 +348,20 @@ export default class Playable {
       // this.stateText.text=" GAME OVER \n Click to restart";
       // this.stateText.visible = true;
 
-      //the "click to restart" handler
-      game.input.onTap.addOnce(this.restart, this);
+      // the "click to restart" handler
+      console.log('--------------------');
+      console.log('you lost, game over!');
+      console.log('--------------------');
+      this.game.input.onTap.addOnce(this.restart, this);
+      // game.input.onTap.addOnce(this.restart, this);
     }
-  };
+  }
 
-  enemyFires = () => {
+  enemyFires() {
     const { game } = this;
-    //  Grab the first bullet we can from the pool
-    this.enemyBullet = this.enemyBullets.getFirstExists(false);
 
+    // grab the first bullet we can from the pool
+    this.enemyBullet = this.enemyBullets.getFirstExists(false);
     this.livingEnemies.length = 0;
 
     this.aliens.forEachAlive(alien => {
@@ -312,84 +370,100 @@ export default class Playable {
     });
 
     if (this.enemyBullet && this.livingEnemies.length > 0) {
-      var random = game.rnd.integerInRange(0, this.livingEnemies.length - 1);
+      const random = game.rnd.integerInRange(0, this.livingEnemies.length - 1);
 
       // randomly select one of them
-      var shooter = this.livingEnemies[random];
-      // And fire the bullet from this enemy
+      const shooter = this.livingEnemies[random];
+      // and fire the bullet from this enemy
       this.enemyBullet.reset(shooter.body.x, shooter.body.y);
 
       game.physics.arcade.moveToObject(this.enemyBullet, this.player, 120);
       this.firingTimer = game.time.now + 2000;
     }
-  };
+  }
 
-  fireBullet = () => {
-    let { game, bulletTime, bullet, bullets, player } = this;
-    //  To avoid them being allowed to fire too fast we set a time limit
+  fireBullet() {
+    const { bullets, game, player } = this;
+    let { bulletTime, bullet } = this;
+
+    // to avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTime) {
-      //  Grab the first bullet we can from the pool
+      // grab the first bullet we can from the pool
       bullet = bullets.getFirstExists(false);
 
       if (bullet) {
-        //  And fire it
+        this.shotsFired += 1;
+        // and fire it
         bullet.reset(player.x, player.y + 8 * scale);
         bullet.body.velocity.y = -400 * scale;
         bulletTime = game.time.now + 200 * scale;
       }
     }
-  };
+  }
 
-  resetBullet = bullet => {
-    //  Called if the bullet goes out of the screen
+  // resetBullet(bullet) {
+  resetBullet() {
+    // called if the bullet goes out of the screen
     this.bullet.kill();
-  };
+  }
 
-  restart = () => {
-    const { lives, aliens, createAliens, player, stateText } = this;
-    //  A new level starts
+  restart() {
+    const { lives, aliens, player } = this;
+    // a new level starts
 
-    //resets the life count
+    // resets the life count
     lives.callAll('revive');
-    //  And brings the aliens back from the dead :)
+    // and brings the aliens back from the dead :)
     aliens.removeAll();
-    createAliens();
+    this.createAliens();
 
-    //revives the player
+    // revives the player
     player.revive();
-    //hides the text
-    // stateText.visible = false;
-  };
 
-  cycleNode = node => {
+    // hides the text
+    // stateText.visible = false;
+  }
+
+  cycleNode(node) {
+    const { game } = this;
+    const { world } = game;
+    const { width } = world;
+
     const half = node.width / 2;
+
     if (node.x < -half) {
-      node.x = this.width + half;
-    } else if (node.x > this.width + half) {
+      node.x = width + half;
+    } else if (node.x > width + half) {
       node.x = -half;
     }
-  };
-  update = () => {
+  }
+
+  update() {
     const {
-      starfield,
-      player,
-      game,
-      firingTimer,
-      bullets,
       aliens,
+      bullets,
       collisionHandler,
       enemyBullets,
       enemyHitsPlayer,
-      playerHalf,
+      firingTimer,
+      game,
+      player,
+      starfield
     } = this;
-    //  Scroll the background
+    // scroll the background
 
     if (starfield.tilePosition) {
       starfield.tilePosition.y += 2;
     }
 
+    this.updateStats({
+      kills: this.kills,
+      score: this.score,
+      shotsFired: this.shotsFired
+    });
+
     if (player.alive) {
-      //  Firing?
+      // firing?
       if (game.time.now > firingTimer) {
         this.enemyFires();
       }
@@ -401,13 +475,26 @@ export default class Playable {
         // this.stateText.text=" GAME OVER \n Click to restart";
         // this.stateText.visible = true;
 
-        //the "click to restart" handler
+        // the "click to restart" handler
         game.input.onTap.addOnce(this.restart, this);
       }
 
-      //  Run collision
-      game.physics.arcade.overlap(bullets, aliens, collisionHandler, null, this);
-      game.physics.arcade.overlap(enemyBullets, player, enemyHitsPlayer, null, this);
+      // run collision
+      game.physics.arcade.overlap(
+        bullets,
+        aliens,
+        collisionHandler,
+        null,
+        this
+      );
+
+      game.physics.arcade.overlap(
+        enemyBullets,
+        player,
+        enemyHitsPlayer,
+        null,
+        this
+      );
     }
-  };
+  }
 }

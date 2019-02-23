@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import Expo from 'expo';
+import { Accelerometer } from 'expo';
 
 const scale = 50;
 const axis = 'x';
@@ -15,8 +15,8 @@ export default class TestSensor extends React.Component {
   }
 
   _subscribe = () => {
-    Expo.Accelerometer.setUpdateInterval(16);
-    this._subscription = Expo.Accelerometer.addListener(data =>
+    Accelerometer.setUpdateInterval(16);
+    this._subscription = Accelerometer.addListener(data =>
       this.setState({ [axis]: data[axis] })
     );
   };
@@ -39,9 +39,9 @@ export default class TestSensor extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    backgroundColor: '#fff',
+    flex: 1,
+    justifyContent: 'center'
+  }
 });

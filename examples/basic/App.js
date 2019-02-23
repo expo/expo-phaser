@@ -1,57 +1,123 @@
-import Expo from 'expo';
-import AssetUtils from 'expo-asset-utils';
 import React from 'react';
-import { View } from 'react-native';
-import Assets from './Assets';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AppLoading, Constants, ScreenOrientation } from 'expo';
+
+import { func, images } from './utils/library';
+
 import Controls from './Controls';
 
+ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
+
 export default class App extends React.Component {
-  state = {
-    loading: true,
-  };
+  constructor(props) {
+    super(props);
 
-  get fonts() {
-    let items = {};
-    const keys = Object.keys(Assets.fonts || {});
-    for (let key of keys) {
-      const item = Assets.fonts[key];
-      const name = key.substr(0, key.lastIndexOf('.'));
-      items[name] = item;
-    }
-    return [items];
+    this.state = {
+      gamePause: false,
+      isLoading: true,
+      kills: 0,
+      score: 0,
+      shotsFired: 0
+    };
+
+    this.preloadAssetsAsync = this.preloadAssetsAsync.bind(this);
+    this.updateStats = this.updateStats.bind(this);
+    this.handleTogglePause = this.handleTogglePause.bind(this);
   }
 
-  get files() {
-    return [...AssetUtils.arrayFromObject(Assets.files || {})];
-  }
+  async preloadAssetsAsync() {
+    const imageAssets = func.cacheImages(images.files);
 
-  get audio() {
-    return AssetUtils.arrayFromObject(Assets.audio);
-  }
-
-  async preloadAssets() {
-    await AssetUtils.cacheAssetsAsync({
-      // fonts: this.fonts,
-      files: this.files,
-      // audio: this.audio,
+    await Promise.all([...imageAssets]).then(() => {
+      this.setState({ isLoading: false });
     });
-    this.setState({ loading: false });
   }
 
-  componentWillMount() {
-    Expo.ScreenOrientation.allow(Expo.ScreenOrientation.Orientation.PORTRAIT);
-    this.preloadAssets();
+  updateStats(data) {
+    this.setState({
+      kills: data.kills,
+      score: data.score,
+      shotsFired: data.shotsFired
+    });
   }
 
-  get loading() {
-    return <View />;
-  }
-
-  get screen() {
-    return <Controls />;
+  handleTogglePause() {
+    this.setState(prevState => ({
+      gamePause: !prevState.gamePause
+    }));
   }
 
   render() {
-    return this.state.loading ? this.loading : this.screen;
+    const { gamePause, isLoading, kills, score, shotsFired } = this.state;
+
+    if (isLoading) {
+      return (
+        <AppLoading
+          onFinish={() => this.setState({ isLoading: false })}
+          startAsync={this.preloadAssetsAsync}
+        />
+      );
+    }
+
+    const accuracy = ((kills / shotsFired) * 100).toFixed(2);
+    const displayAccuracy = shotsFired > 0 ? `Accuracy: ${accuracy}%` : null;
+
+    return (
+      <React.Fragment>
+        <Controls gamePause={gamePause} updateStats={this.updateStats} />
+
+        <View style={styles.container}>
+          <Text style={styles.text}>{`Score: ${score}`}</Text>
+          <Text style={styles.text}>{`Kills: ${kills}`}</Text>
+          <Text style={styles.text}>{`Shots Fired: ${shotsFired}`}</Text>
+          {displayAccuracy && (
+            <Text style={styles.text}>{displayAccuracy}</Text>
+          )}
+        </View>
+
+        <View style={styles.footer}>
+          <TouchableOpacity
+            activeOpacity={0.7}
+            onPress={this.handleTogglePause}
+            style={styles.footerButton}
+          >
+            <Text style={styles.footerText}>
+              {gamePause ? 'Play' : 'Pause'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </React.Fragment>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    left: 16,
+    position: 'absolute',
+    top: Constants.statusBarHeight,
+    width: '100%'
+  },
+  text: {
+    color: '#fff'
+  },
+  footer: {
+    alignItems: 'center',
+    bottom: 32,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    width: '100%'
+  },
+  footerButton: {
+    backgroundColor: '#323031',
+    borderRadius: 4,
+    marginHorizontal: 16,
+    padding: 16,
+    width: 76
+  },
+  footerText: {
+    color: '#fff',
+    textAlign: 'center'
+  }
+});

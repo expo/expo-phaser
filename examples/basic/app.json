@@ -1,15 +1,21 @@
 {
   "expo": {
-    "name": "basic",
+    "name": "expo-phaser-basic",
     "description": "expo-phaser basic example",
+    "scheme": "expo-phaser-basic",
     "slug": "expo-phaser-basic",
-    "sdkVersion": "25.0.0",
+    "privacy": "public",
+    "sdkVersion": "32.0.0",
     "version": "1.0.0",
-    "primaryColor": "#E1E4F0",
+    "platforms": ["ios", "android"],
+    "githubUrl": "https://github.com/expo/expo-phaser",
+    "orientation": "portrait",
+    "primaryColor": "#000",
     "icon": "./assets/icon.png",
-    "loading": {
-      "icon": "./assets/icon.png",
-      "hideExponentText": false
+    "splash": {
+      "backgroundColor": "#000",
+      "image": "./assets/splash.png",
+      "resizeMode": "cover"
     },
     "packagerOpts": {
       "assetExts": ["json"]
