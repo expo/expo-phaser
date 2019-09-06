@@ -5,7 +5,7 @@
     "scheme": "expo-phaser-basic",
     "slug": "expo-phaser-basic",
     "privacy": "public",
-    "sdkVersion": "32.0.0",
+    "sdkVersion": "33.0.0",
     "version": "1.0.0",
     "platforms": ["ios", "android"],
     "githubUrl": "https://github.com/expo/expo-phaser",
