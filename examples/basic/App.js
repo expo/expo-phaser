@@ -1,12 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { AppLoading, Constants, ScreenOrientation } from 'expo';
+import { AppLoading } from 'expo';
+import Constants from 'expo-constants';
 
 import { func, images } from './utils/library';
 
 import Controls from './Controls';
-
-ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
 
 export default class App extends React.Component {
   constructor(props) {

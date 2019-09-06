@@ -1,16 +1,11 @@
 import { Image } from 'react-native';
-import { Asset, Font } from 'expo';
+import { Font } from 'expo';
+import { Asset } from 'expo-asset';
 
-const cacheFonts = fonts => {
-  const mappedFonts = fonts.map(font => Font.loadAsync(font));
-
-  return mappedFonts;
-};
+const cacheFonts = fonts => fonts.map(font => Font.loadAsync(font));
 
 const cacheImages = images => {
-  const imagesArray = Object.values(images);
-
-  return imagesArray.map(image => {
+  return Object.values(images).map(image => {
     if (typeof image === 'string') {
       return Image.prefetch(image);
     }

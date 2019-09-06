@@ -1,6 +1,7 @@
 import React from 'react';
-import { Accelerometer, GLView } from 'expo';
 import PropTypes from 'prop-types';
+import { GLView } from 'expo-gl';
+import { Accelerometer } from 'expo-sensors';
 import { MultiTouchView } from 'expo-multi-touch';
 
 import Game from './Game';
