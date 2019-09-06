@@ -4,31 +4,35 @@ import { Accelerometer } from 'expo';
 
 const scale = 50;
 const axis = 'x';
+
 export default class TestSensor extends React.Component {
   state = {};
 
   componentDidMount() {
-    this._subscribe();
-  }
-  componentWillUnmount() {
-    this._unsubscribe();
+    this.subscribe();
   }
 
-  _subscribe = () => {
+  componentWillUnmount() {
+    this.unsubscribe();
+  }
+
+  subscribe = () => {
     Accelerometer.setUpdateInterval(16);
-    this._subscription = Accelerometer.addListener(data =>
+
+    this.subscription = Accelerometer.addListener(data =>
       this.setState({ [axis]: data[axis] })
     );
   };
 
-  _unsubscribe = () => {
-    this._subscription && this._subscription.remove();
-    this._subscription = null;
+  unsubscribe = () => {
+    this.subscription && this.subscription.remove();
+    this.subscription = null;
   };
 
   render() {
     const data = this.state[axis];
     const adjusted = Math.round(data * scale);
+
     return (
       <View style={styles.container}>
         <Text>{`${axis}: ${adjusted}`}</Text>
